@@ -18,8 +18,12 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => CovidBloc(),
       child: GetMaterialApp(
+        
+        themeMode: ThemeMode.system,
+        darkTheme: ThemeData.dark(),
         title: 'Flutter Demo',
         theme: ThemeData(
+          appBarTheme: const AppBarTheme(color: Colors.white10),
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,

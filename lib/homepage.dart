@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:sqflite/sqflite.dart';
 import 'api_model.dart';
 import 'bloc/covid_bloc.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,31 +19,34 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _newsBloc.add(GetCovidList());
+    // var db = openDatabase('news.db');
+    // print(db.then((value) => print(value)));
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: ThemeData(),
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        // backgroundColor: Get.isDarkMode ? Colors.black12:Colors.white,
         // title: Text(""),
         elevation: 0,
-        title: const Padding(
-          padding: EdgeInsets.only(left: 8),
+        title:   Padding(
+          padding: const EdgeInsets.only(left: 8),
           child: Text(
             "CNBC",
-            style: TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+            style:Theme.of(context).textTheme.headline6,
+                
           ),
         ),
-        actions: const [
+        actions: [
           Padding(
-            padding: EdgeInsets.only(right: 8),
+            padding:const EdgeInsets.only(right: 8),
             child: Icon(
               Icons.menu,
-              color: Colors.black,
+              color: Theme.of(context).iconTheme.color,
             ),
           )
         ],
@@ -64,7 +69,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               "Discover Latest News",
               style: TextStyle(
-                  color: Colors.black,
+                  // color: Colors.black,
                   fontSize: Get.width / 9,
                   fontWeight: FontWeight.bold),
             ),
@@ -104,12 +109,12 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   height: 25,
                   color: Colors.red,
-                  width: 2,
+                  width: 3,
                 ),
                 const SizedBox(
                   width: 10,
                 ),
-                const Text("Breaking News")
+                 Text("Breaking News",style: Theme.of(context).textTheme.headline6,)
               ],
             ),
             Flexible(child: _buildListCovid()),
@@ -178,7 +183,7 @@ class _HomePageState extends State<HomePage> {
             maxLines: 3,
             // softWrap: true,
           ),
-          subtitle: Text("${model.articles![index].publishedAt}"),
+          subtitle: Text(timeago.format(DateTime.parse(model.articles![index].publishedAt.toString()))),
         ));
       },
     );
@@ -192,7 +197,7 @@ Widget category(IconData name, color, VoidCallback onclick) {
     // color: color,
     height: 100,
     width: 100,
-    decoration: BoxDecoration(),
+    decoration: const BoxDecoration(),
     child: IconButton(
       icon: Icon(name),
       onPressed: onclick,
