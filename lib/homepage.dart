@@ -1,12 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
-
 import 'api_model.dart';
 import 'bloc/covid_bloc.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               children: [
                 category(Icons.people_alt, Colors.amber, () {}),
-                category(Icons.newspaper, Colors.amber, () {}),
+                category(Icons.new_label, Colors.amber, () {}),
                 category(Icons.run_circle, Colors.amber, () {}),
                 category(Icons.movie, Colors.amber, () {}),
               ],
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
               } else if (state is CovidLoading) {
                 return _buildLoading();
               } else if (state is CovidLoaded) {
-                return _buildCard(context, state.covidModel);
+                return _buildCard(context, state.newsModel);
               } else if (state is CovidError) {
                 return Container();
               } else {
@@ -154,28 +154,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildCard(BuildContext context, CovidModel model) {
+  Widget _buildCard(BuildContext context, NewsModel model) {
     return ListView.builder(
-      itemCount: model.countries!.length,
+      itemCount: model.articles!.length,
       itemBuilder: (context, index) {
-        return Container(
-          margin: const EdgeInsets.all(8.0),
-          child: Card(
-            child: Container(
-              margin: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Text("Country: ${model.countries![index].country}"),
-                  Text(
-                      "Total Confirmed: ${model.countries![index].totalConfirmed}"),
-                  Text("Total Deaths: ${model.countries![index].totalDeaths}"),
-                  Text(
-                      "Total Recovered: ${model.countries![index].totalRecovered}"),
-                ],
-              ),
-            ),
+        return Card(
+            child: ListTile(
+          leading: CachedNetworkImage(
+            imageUrl: "${model.articles![index].urlToImage}",
+            errorWidget: (context, url, error) {
+              return Image.asset('assets/images/news.jpg');
+            },
+            height: 150,
+            width: 150,
           ),
-        );
+          title: Text(
+            "${model.articles![index].title}",
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              overflow: TextOverflow.ellipsis,
+            ),
+            maxLines: 3,
+            // softWrap: true,
+          ),
+          subtitle: Text("${model.articles![index].publishedAt}"),
+        ));
       },
     );
   }

@@ -1,126 +1,101 @@
-class CovidModel {
-  Global? global;
-  List<Countries>? countries;
-  String? date;
-  String? error;
+// To parse this JSON data, do
+//
+//     final newsModel = newsModelFromJson(jsonString);
 
-  CovidModel({this.global, this.countries, this.date});
+import 'dart:convert';
 
-  CovidModel.withError(String errorMessage) {
+NewsModel newsModelFromJson(String str) => NewsModel.fromJson(json.decode(str));
+
+String newsModelToJson(NewsModel data) => json.encode(data.toJson());
+
+class NewsModel {
+    NewsModel({
+        this.status,
+        this.totalResults,
+        this.articles,
+        
+    });
+
+    String? status;
+    int? totalResults;
+    List<Article>? articles;
+    String? error;
+ NewsModel.withError(String errorMessage) {
     error = errorMessage;
   }
+    factory NewsModel.fromJson(Map<String, dynamic> json) => NewsModel(
+        status: json["status"] == null ? null : json["status"],
+        totalResults: json["totalResults"] == null ? null : json["totalResults"],
+        articles: json["articles"] == null ? null : List<Article>.from(json["articles"].map((x) => Article.fromJson(x))),
+    );
 
-  CovidModel.fromJson(Map<String, dynamic> json) {
-    global =
-        json['Global'] != null ? new Global.fromJson(json['Global']) : null;
-    if (json['Countries'] != null) {
-      countries = [];
-      json['Countries'].forEach((v) {
-        countries!.add(new Countries.fromJson(v));
-      });
-    }
-    date = json['Date'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.global != null) {
-      data['Global'] = this.global!.toJson();
-    }
-    if (this.countries != null) {
-      data['Countries'] = this.countries!.map((v) => v.toJson()).toList();
-    }
-    data['Date'] = this.date;
-    return data;
-  }
+    Map<String, dynamic> toJson() => {
+        "status": status == null ? null : status,
+        "totalResults": totalResults == null ? null : totalResults,
+        "articles": articles == null ? null : List<dynamic>.from(articles!.map((x) => x.toJson())),
+    };
 }
 
-class Global {
-  int? newConfirmed;
-  int? totalConfirmed;
-  int? newDeaths;
-  int? totalDeaths;
-  int? newRecovered;
-  int? totalRecovered;
+class Article {
+    Article({
+        this.source,
+        this.author,
+        this.title,
+        this.description,
+        this.url,
+        this.urlToImage,
+        this.publishedAt,
+        this.content,
+    });
 
-  Global(
-      {this.newConfirmed,
-      this.totalConfirmed,
-      this.newDeaths,
-      this.totalDeaths,
-      this.newRecovered,
-      this.totalRecovered});
+    Source? source;
+    String? author;
+    String? title;
+    String? description;
+    String? url;
+    String? urlToImage;
+    DateTime?publishedAt;
+    String? content;
 
-  Global.fromJson(Map<String, dynamic> json) {
-    newConfirmed = json['NewConfirmed'];
-    totalConfirmed = json['TotalConfirmed'];
-    newDeaths = json['NewDeaths'];
-    totalDeaths = json['TotalDeaths'];
-    newRecovered = json['NewRecovered'];
-    totalRecovered = json['TotalRecovered'];
-  }
+    factory Article.fromJson(Map<String, dynamic> json) => Article(
+        source: json["source"] == null ? null : Source.fromJson(json["source"]),
+        author: json["author"] == null ? null : json["author"],
+        title: json["title"] == null ? null : json["title"],
+        description: json["description"] == null ? null : json["description"],
+        url: json["url"] == null ? null : json["url"],
+        urlToImage: json["urlToImage"] == null ? null : json["urlToImage"],
+        publishedAt: json["publishedAt"] == null ? null : DateTime.parse(json["publishedAt"]),
+        content: json["content"] == null ? null : json["content"],
+    );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['NewConfirmed'] = this.newConfirmed;
-    data['TotalConfirmed'] = this.totalConfirmed;
-    data['NewDeaths'] = this.newDeaths;
-    data['TotalDeaths'] = this.totalDeaths;
-    data['NewRecovered'] = this.newRecovered;
-    data['TotalRecovered'] = this.totalRecovered;
-    return data;
-  }
+    Map<String, dynamic> toJson() => {
+        "source": source == null ? null : source!.toJson(),
+        "author": author == null ? null : author,
+        "title": title == null ? null : title,
+        "description": description == null ? null : description,
+        "url": url == null ? null : url,
+        "urlToImage": urlToImage == null ? null : urlToImage,
+        "publishedAt": publishedAt == null ? null : publishedAt!.toIso8601String(),
+        "content": content == null ? null : content,
+    };
 }
 
-class Countries {
-  String? country;
-  String? countryCode;
-  String? slug;
-  int? newConfirmed;
-  int? totalConfirmed;
-  int? newDeaths;
-  int? totalDeaths;
-  int? newRecovered;
-  int? totalRecovered;
-  String? date;
+class Source {
+    Source({
+        this.id,
+        this.name,
+    });
 
-  Countries(
-      {this.country,
-      this.countryCode,
-      this.slug,
-      this.newConfirmed,
-      this.totalConfirmed,
-      this.newDeaths,
-      this.totalDeaths,
-      this.newRecovered,
-      this.totalRecovered,
-      this.date});
+    String? id;
+    String? name;
 
-  Countries.fromJson(Map<String, dynamic> json) {
-    country = json['Country'];
-    countryCode = json['CountryCode'];
-    slug = json['Slug'];
-    newConfirmed = json['NewConfirmed'];
-    totalConfirmed = json['TotalConfirmed'];
-    newDeaths = json['NewDeaths'];
-    totalDeaths = json['TotalDeaths'];
-    newRecovered = json['NewRecovered'];
-    totalRecovered = json['TotalRecovered'];
-    date = json['Date'];
-  }
+    factory Source.fromJson(Map<String, dynamic> json) => Source(
+        id: json["id"] == null ? null : json["id"],
+        name: json["name"] == null ? null : json["name"],
+    );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Country'] = this.country;
-    data['CountryCode'] = this.countryCode;
-    data['Slug'] = this.slug;
-    data['NewConfirmed'] = this.newConfirmed;
-    data['TotalConfirmed'] = this.totalConfirmed;
-    data['NewDeaths'] = this.newDeaths;
-    data['TotalDeaths'] = this.totalDeaths;
-    data['NewRecovered'] = this.newRecovered;
-    data['TotalRecovered'] = this.totalRecovered;
-    data['Date'] = this.date;
-    return data;
-  }
+    Map<String, dynamic> toJson() => {
+        "id": id == null ? null : id,
+        "name": name == null ? null : name,
+    };
 }

@@ -12,8 +12,8 @@ class CovidInitial extends CovidState {}
 class CovidLoading extends CovidState {}
 
 class CovidLoaded extends CovidState {
-  final CovidModel covidModel;
-  const CovidLoaded(this.covidModel);
+  final NewsModel newsModel;
+  const CovidLoaded(this.newsModel);
 }
 
 class CovidError extends CovidState {
