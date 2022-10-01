@@ -3,7 +3,8 @@
 A new Flutter project.
 
 ## Getting Started
-https://github.com/pravesh-razor/news_app_bloc/blob/01238a10e573c408ddf6cb4df9ae29905bcf84dc/Screen%20Recording%202022-10-01%20at%206.00.34%20PM.mov
+![Screen Recording 2022-10-01 at 6 00 34 PM](https://user-images.githubusercontent.com/88076276/193409884-2d84ae39-5fe5-4ca6-a064-fd58f7c25622.gif)
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
