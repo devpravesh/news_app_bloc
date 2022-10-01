@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
-import 'package:news_app_bloc/apirepo.dart';
+import 'package:news_app_bloc/API/api.dart';
 
-import '../api_model.dart';
+import '../API/api_model.dart';
 
 part 'covid_event.dart';
 part 'covid_state.dart';

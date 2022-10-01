@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:news_app_bloc/Database/database.dart';
 import 'package:sqflite/sqflite.dart';
-import 'api_model.dart';
+import 'API/api_model.dart';
 import 'bloc/covid_bloc.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -33,20 +34,25 @@ class _HomePageState extends State<HomePage> {
         // backgroundColor: Get.isDarkMode ? Colors.black12:Colors.white,
         // title: Text(""),
         elevation: 0,
-        title:   Padding(
+        title: Padding(
           padding: const EdgeInsets.only(left: 8),
           child: Text(
             "CNBC",
-            style:Theme.of(context).textTheme.headline6,
-                
+            style: Theme.of(context).textTheme.headline6,
           ),
         ),
         actions: [
           Padding(
-            padding:const EdgeInsets.only(right: 8),
-            child: Icon(
-              Icons.menu,
-              color: Theme.of(context).iconTheme.color,
+            padding: const EdgeInsets.only(right: 8),
+            child: InkWell(
+              onTap: () {
+                // StoreNews().database;
+                StoreNews().insertNews(NewsModel());
+              },
+              child: Icon(
+                Icons.menu,
+                color: Theme.of(context).iconTheme.color,
+              ),
             ),
           )
         ],
@@ -99,7 +105,7 @@ class _HomePageState extends State<HomePage> {
             Row(
               children: [
                 category(Icons.people_alt, Colors.amber, () {}),
-                category(Icons.new_label, Colors.amber, () {}),
+                category(Icons.newspaper, Colors.amber, () {}),
                 category(Icons.run_circle, Colors.amber, () {}),
                 category(Icons.movie, Colors.amber, () {}),
               ],
@@ -114,7 +120,10 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(
                   width: 10,
                 ),
-                 Text("Breaking News",style: Theme.of(context).textTheme.headline6,)
+                Text(
+                  "Breaking News",
+                  style: Theme.of(context).textTheme.headline6,
+                )
               ],
             ),
             Flexible(child: _buildListCovid()),
@@ -183,7 +192,8 @@ class _HomePageState extends State<HomePage> {
             maxLines: 3,
             // softWrap: true,
           ),
-          subtitle: Text(timeago.format(DateTime.parse(model.articles![index].publishedAt.toString()))),
+          subtitle: Text(timeago.format(
+              DateTime.parse(model.articles![index].publishedAt.toString()))),
         ));
       },
     );
@@ -193,14 +203,16 @@ class _HomePageState extends State<HomePage> {
 }
 
 Widget category(IconData name, color, VoidCallback onclick) {
-  return Container(
-    // color: color,
-    height: 100,
-    width: 100,
-    decoration: const BoxDecoration(),
-    child: IconButton(
-      icon: Icon(name),
-      onPressed: onclick,
+  return Flexible(
+    child: Container(
+      // color: color,
+      height: 100,
+      width: 100,
+      decoration: const BoxDecoration(),
+      child: IconButton(
+        icon: Icon(name),
+        onPressed: onclick,
+      ),
     ),
   );
 }
