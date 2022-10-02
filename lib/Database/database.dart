@@ -11,64 +11,41 @@ const String columnurl = 'url';
 const String columnurltoimg = 'urlToImage';
 const String columnPublishedAt = 'publishedAt';
 const String columnContent = 'content';
-//  Source? source;
-// String? author;
-// String? title;
-// String? description;
-// String? url;
-// String? urlToImage;
-// DateTime?publishedAt;
-// String? content;
-////////////////////////////
-// const String columnId = 'id';
-// const String columnTitle = 'status';
-// const String columnPublishedAt = 'totalResults';
-// const String columnDescription = 'articles';
 
-// const String columnContent = 'content';
 class StoreNews {
   static Database? _database;
 
-  Future<Database> get database async {
-    _database ??= await initializeDatabase();
-    return _database!;
-  }
+  createDatabase() async {
+    String databasesPath = await getDatabasesPath();
+    String dbPath = databasesPath + 'my.db';
 
-  Future<Database> initializeDatabase() async {
-    var dir = await getDatabasesPath();
-    var path = dir + "new.db";
-    print("db path:$path");
-    var database = await openDatabase(
-      path,
-      version: 2,
-      onCreate: (db, version) {
-        // db.execute('''
-        //   create table $tableNews (
-        //   $columnId integer primary key autoincrement,
-        //   $columnTitle text not null,
-        //   $columnDescription text not null,
-        //   $columnPublishedAt text not null)
-        // ''');
-        db.execute('''
-          create table $tableNews (
-          $columnId integer primary key autoincrement,
-          $columnsrc text not null,
-          $columnauth text not null,
-          $columnTitle text not null,
-          $columnDescription text not null,
-          $columnurl text not null,
-          $columnurltoimg text not null,
-          $columnPublishedAt text not null)
-          $columnContent text not null,
-        ''');
-      },
-    );
+    var database = await openDatabase(dbPath, version: 1, onCreate: populateDb);
     return database;
   }
 
-  void insertNews(NewsModel newsModel) async {
-    var db = await database;
-    var result = await db.insert(tableNews, Article().toJson());
+  void populateDb(Database database, int version) async {
+    await database.execute("CREATE TABLE News ("
+        "$columnId integer primary key autoincrement,"
+        " $columnsrc text not null,"
+        "$columnauth text not null,"
+        "$columnTitle text not null,"
+        "$columnDescription text not null,"
+        "$columnurl text not null,"
+        "$columnurltoimg text not null,"
+        "$columnPublishedAt text not null,"
+        "$columnContent text not null"
+        ")");
+  }
+
+  void insertNews(Article article) async {
+    var db = await createDatabase();
+    var result = await db.insert("News", article.toMap());
     print('result : $result');
+  }
+
+  getdata() async {
+    var db = await createDatabase();
+    Map<String, dynamic> maps = await db.query('News');
+    return Article.fromJson(maps);
   }
 }

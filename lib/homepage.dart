@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:news_app_bloc/Database/database.dart';
+import 'package:news_app_bloc/news.dart';
 import 'package:sqflite/sqflite.dart';
 import 'API/api_model.dart';
 import 'bloc/covid_bloc.dart';
@@ -19,9 +21,10 @@ class _HomePageState extends State<HomePage> {
   final CovidBloc _newsBloc = CovidBloc();
   @override
   void initState() {
+    // StoreNews().getdata().isBlank
+    // ?
     _newsBloc.add(GetCovidList());
-    // var db = openDatabase('news.db');
-    // print(db.then((value) => print(value)));
+    // : StoreNews().getdata();
     super.initState();
   }
 
@@ -31,8 +34,6 @@ class _HomePageState extends State<HomePage> {
       // backgroundColor: ThemeData(),
       appBar: AppBar(
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        // backgroundColor: Get.isDarkMode ? Colors.black12:Colors.white,
-        // title: Text(""),
         elevation: 0,
         title: Padding(
           padding: const EdgeInsets.only(left: 8),
@@ -46,8 +47,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(right: 8),
             child: InkWell(
               onTap: () {
-                // StoreNews().database;
-                StoreNews().insertNews(NewsModel());
+                StoreNews().getdata();
               },
               child: Icon(
                 Icons.menu,
@@ -146,6 +146,8 @@ class _HomePageState extends State<HomePage> {
                   content: Text(state.message!),
                 ),
               );
+            } else if (state is CovidLoaded) {
+              StoreNews().insertNews(state.newsModel.articles!.first);
             }
           },
           child: BlocBuilder<CovidBloc, CovidState>(
@@ -172,29 +174,34 @@ class _HomePageState extends State<HomePage> {
     return ListView.builder(
       itemCount: model.articles!.length,
       itemBuilder: (context, index) {
-        return Card(
-            child: ListTile(
-          leading: CachedNetworkImage(
-            imageUrl: "${model.articles![index].urlToImage}",
-            errorWidget: (context, url, error) {
-              return Image.asset('assets/images/news.jpg');
-            },
-            height: 150,
-            width: 150,
-          ),
-          title: Text(
-            "${model.articles![index].title}",
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              overflow: TextOverflow.ellipsis,
+        return InkWell(
+          onTap: () {
+            Get.to(() => NewsDetail(link: model.articles![index].url));
+          },
+          child: Card(
+              child: ListTile(
+            leading: CachedNetworkImage(
+              imageUrl: "${model.articles![index].urlToImage}",
+              errorWidget: (context, url, error) {
+                return Image.asset('assets/images/news.jpg');
+              },
+              height: 150,
+              width: 150,
             ),
-            maxLines: 3,
-            // softWrap: true,
-          ),
-          subtitle: Text(timeago.format(
-              DateTime.parse(model.articles![index].publishedAt.toString()))),
-        ));
+            title: Text(
+              "${model.articles![index].title}",
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis,
+              ),
+              maxLines: 3,
+              // softWrap: true,
+            ),
+            subtitle: Text(timeago.format(
+                DateTime.parse(model.articles![index].publishedAt.toString()))),
+          )),
+        );
       },
     );
   }

@@ -1,11 +1,16 @@
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import 'api_model.dart';
+
+var now = DateTime.now();
+var formatter = DateFormat('yyyy-MM-dd');
+String formattedDate = formatter.format(now);
 
 class ApiProvider {
   final Dio _dio = Dio();
   final String _url =
-      'https://newsapi.org/v2/everything?q=tesla&from=2022-09-01&sortBy=publishedAt&apiKey=c10c5b98adef41208852e54ad2cb4bb5';
+      'https://newsapi.org/v2/everything?q=tesla&from=$formattedDate&sortBy=publishedAt&apiKey=c10c5b98adef41208852e54ad2cb4bb5';
 
   Future<NewsModel> fetchCovidList() async {
     try {
